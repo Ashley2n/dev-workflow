@@ -1,0 +1,9 @@
+{
+  "name": "dev-workflow",
+  "version": "0.1.0",
+  "description": "Ashley's engineering workflow: ticket and new-project pipelines built on published skills, plus review-first and teach-back steps that turn every task into practice.",
+  "author": { "name": "Ashley Abongwa", "url": "https://github.com/Ashley2n" },
+  "homepage": "https://github.com/Ashley2n/dev-workflow",
+  "license": "MIT",
+  "keywords": ["workflow", "learning", "code-review", "dotnet"]
+}
