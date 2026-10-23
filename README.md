@@ -29,6 +29,9 @@ New project   /new-project <idea>
 | `/review-me` | I review the diff first (with `checklist.md`), then Matt Pocock's `code-review` runs, then the two are compared and my misses are logged. |
 | `/teach-back` | Two or three "why" questions about the change, answered from memory, graded, with gaps logged. |
 | `templates/user-claude.md` | My preferences (source rules, depth, stack rule, learning-log path), appended to `~/.claude/CLAUDE.md`. |
+| `scripts/local-setup.sh` | For team repos. Keeps AGENTS.md, CLAUDE.local.md and docs/specs, scope and reviews out of git via `.git/info/exclude`, and makes CLAUDE.local.md import `@AGENTS.md`. Never touches the team's CLAUDE.md. |
+
+The skills only run when I type them (`disable-model-invocation: true`), so Claude never starts a ticket on its own. Plugin skills are namespaced: `/dev-workflow:work-ticket`, or just `/work-ticket` when no other command has that name ([docs](https://code.claude.com/docs/en/skills)).
 
 ## What it builds on (install all of these)
 
@@ -50,6 +53,14 @@ bash scripts/install.sh
 Just this plugin, without the published pieces: `/plugin install dev-workflow --marketplace Ashley2n/dev-workflow`
 
 Then restart Claude Code. On a work machine, check that the **Learning log** path in `~/.claude/CLAUDE.md` points at your vault.
+
+In each **team repo**, once, before `/audit`:
+
+```bash
+bash path/to/dev-workflow/scripts/local-setup.sh path/to/team-repo
+```
+
+Safe to re-run. When `/audit` offers to move the team's CLAUDE.md into AGENTS.md, answer no. Afterwards `git status` should show nothing new.
 
 Coach mode is per repo. `/new-project` turns it on with:
 
