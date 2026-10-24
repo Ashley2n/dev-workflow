@@ -1,8 +1,7 @@
 ---
 name: teach-back
-description: Check that Ashley understands a finished change before it goes to her lead or client. Asks two or three questions about the decisions in the change, grades her own-words answers, and logs gaps to her learning log. Use when the user runs /teach-back or wants to check she can explain a change.
+description: Check that Ashley understands a finished change before it goes to her lead or client. Asks two or three questions about the decisions in the change, grades her own-words answers, and logs gaps to her learning log. Use only when Ashley runs /teach-back or asks to check she can explain a change, or when /work-ticket or /new-project reaches its teach-back step.
 argument-hint: "[optional: the change, ticket or spec to quiz on]"
-disable-model-invocation: true
 ---
 
 # Teach-back

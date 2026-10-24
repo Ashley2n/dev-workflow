@@ -1,8 +1,7 @@
 ---
 name: review-me
-description: Review-first practice. Ashley reviews the change herself, then an independent AI review runs (mattpocock code-review), then the two are compared and her misses are logged so her study list comes from real mistakes. Use when the user runs /review-me or asks to practice reviewing a change.
-argument-hint: "[fixed point to diff against, default: the branch's merge-base with main]"
-disable-model-invocation: true
+description: Review-first practice. Ashley reviews the change herself, then an independent AI review runs (mattpocock code-review), then the two are compared and her misses are logged so her study list comes from real mistakes. Use only when Ashley runs /review-me or asks to practice reviewing a change, or when /work-ticket or /new-project reaches its review-first step. Not for ordinary "review this PR" requests.
+argument-hint: "[fixed point to diff against, default: the branch's merge-base with the default branch]"
 ---
 
 # Review me
@@ -13,7 +12,13 @@ The independent review is **mattpocock `code-review`**, used unchanged. This ski
 
 ## 1. Set up
 
-- Work out the diff (default `git diff $(git merge-base HEAD main)...HEAD` plus uncommitted changes) and list the changed files with a one-line summary each. **Don't hint at problems.**
+- Work out the fixed point: the argument if given, else the merge-base with the repo's default branch (team repos often use `develop` or `master`, not `main`):
+  ```bash
+  BASE=$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null || echo main)
+  FIXED=$(git merge-base HEAD "$BASE")
+  git diff "$FIXED" --stat   # committed + uncommitted changes since the fixed point
+  ```
+  List the changed files with a one-line summary each. **Don't hint at problems.**
 - Open `checklist.md` (next to this file) and show Ashley the checklist.
 
 ## 2. Ashley reviews first (⏸)
@@ -24,7 +29,7 @@ Ask her to write her findings in any form: file, what she noticed, why it worrie
 
 ## 3. Independent review
 
-Run **`code-review`** (mattpocock) on the same diff. If there's a spec or ticket, give it the spec so both of its checks run (Standards and Spec). Keep only findings it is confident about. Pre-existing issues that the diff didn't touch don't count.
+Run **`mattpocock-skills:code-review`** on the same fixed point. Use that full name: Claude Code also ships a built-in `code-review`, which is a different reviewer without the Standards/Spec split. If there's a spec or ticket, give it the spec so both of its checks run (Standards and Spec). Keep only findings it is confident about. Pre-existing issues that the diff didn't touch don't count.
 
 ## 4. Compare
 

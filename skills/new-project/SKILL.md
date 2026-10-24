@@ -9,24 +9,24 @@ disable-model-invocation: true
 
 You guide Ashley from an idea to a running first feature. This is for **personal projects**, where **Ashley writes most of the code** and you coach. The goal is a good app **and** a better developer.
 
-It follows the greenfield path from jsmastery-pro/skills: **scope → architect the stack → scaffold → audit → feature loop**. Call those skills for the real work. This skill only adds Ashley's preferences and checkpoints. If a skill isn't installed, say which one and point to this plugin's README.
+It follows the greenfield path from jsmastery-pro/skills: **scope → architect the stack → scaffold → audit → feature loop**. Call those skills for the real work. This skill only adds Ashley's preferences and checkpoints. Invoke them with the Skill tool by exact name: `scope`, `architect`, `audit`, `develop`, `check`, `test`, `sync`, `mattpocock-skills:grilling`, `dev-workflow:review-me`, `dev-workflow:teach-back`. If a skill isn't installed or the call is refused, stop, say which one, and point to this plugin's README.
 
 Track the stages with a todo list. Stop at every **⏸**.
 
 ## 0. Before anything
 
-- Check Ashley's vault (`MyVault/01-Projects/Personal-Projects/`) for an existing folder or notes on this idea. Many of her projects already have a PRD, SRS, RFC, ADR or roadmap. **Use what exists. Don't re-plan from zero.**
+- Check Ashley's vault (`~/Documents/03-Resources/MyVault/01-Projects/Personal-Projects/`) for an existing folder or notes on this idea. Read that folder's `README.md` first, and skim notes by their `## Summary` / `## Overview` line before opening them. Many of her projects already have a PRD, SRS, RFC, ADR or roadmap. **Use what exists. Don't re-plan from zero.**
 
 ## 1. Scope (⏸)
 
-Run **`scope`**. Use **`grill-me`** for anything fuzzy: one question at a time, each with a recommended answer.
+Run **`scope`**. Use **`mattpocock-skills:grilling`** for anything fuzzy: one question at a time, each with a recommended answer.
 
 - When `scope` asks for the delivery style, explain the four options in one line each and recommend one.
 - When it asks for the workflow depth, recommend **Beta** (tests included). Recommend **Prototype** only if Ashley says it's a throwaway experiment.
 
 ## 2. Decide the stack (⏸)
 
-Run **`architect`** in stack mode, with references level **`sources+links`**.
+Run **`architect`** for the stack (its `ARCHITECTURE` mode). When it asks for the references level, recommend **`sources+links`**.
 
 Apply Ashley's **stack rule**:
 1. If one stack is the **clear winner** on compatibility, documentation, reliability or performance for this idea, pick it.
@@ -56,8 +56,8 @@ For each feature in scope order:
 2. **Test cases first** (⏸): Ashley writes the plain-English test names. You suggest any she missed and explain why each matters.
 3. **`develop`**, but **Ashley writes the core logic**. You set up the files, boilerplate and wiring. At each real decision point (business rule, error handling, data shape), stop and ask her to write it. Coach mode does this automatically. Give hints and questions first. Show a full answer only if she asks or has been stuck past the limit she set (default 20 minutes).
 4. The depth's checks: `check verify`, `test` (Beta and above).
-5. **`review-me`** (⏸): she reviews her own code first, then compares with the AI reviewer.
-6. **`teach-back`** on anything new to her.
+5. **`dev-workflow:review-me`** (⏸): she reviews her own code first, then compares with the AI reviewer.
+6. **`dev-workflow:teach-back`** on anything new to her.
 7. `sync`, then commit.
 
 ## 5. Record it in the vault
