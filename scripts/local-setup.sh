@@ -29,12 +29,13 @@ if grep -q "dev-workflow:start" "$EXCLUDE"; then
   echo "   Already present; edit $EXCLUDE by hand to change it."
 else
   PATTERNS=(AGENTS.md CLAUDE.local.md)
-  for dir in docs/specs docs/scope docs/reviews; do
-    # Excluding a folder the team already commits to would hide new team files too.
-    if [ -n "$(git ls-files -- "$dir" | head -n 1)" ]; then
-      echo "   Skipped $dir/: the team already tracks files there. Use it the team's way."
+  # Folders end in /; docs/decisions.md is the index /work-ticket creates when the team has none.
+  for path in docs/specs/ docs/scope/ docs/reviews/ docs/decisions.md; do
+    # Excluding a path the team already commits to would hide new team files too.
+    if [ -n "$(git ls-files -- "${path%/}" | head -n 1)" ]; then
+      echo "   Skipped $path: the team already tracks it. Use it the team's way."
     else
-      PATTERNS+=("/$dir/")
+      PATTERNS+=("/$path")
     fi
   done
   {

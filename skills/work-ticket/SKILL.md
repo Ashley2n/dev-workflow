@@ -11,24 +11,32 @@ You run one ticket through Ashley's workflow. Ashley is a junior developer. At w
 
 This skill is a thin conductor. It calls published skills for the real work and adds only Ashley's checkpoints. Don't redo what those skills already do.
 
-| Step | Skill used | Source |
+Invoke each skill with the Skill tool by the exact name below. Plugin skills need their namespace, and some short names collide (Claude Code has its own built-in `code-review`).
+
+| Step | Skill name to invoke | Source |
 |---|---|---|
 | Context | `audit` | jsmastery-pro/skills |
-| Clarify | `grill-me` | mattpocock/skills |
+| Clarify | `mattpocock-skills:grilling` | mattpocock/skills (`grill-me` is user-only, so it can't be called from here) |
 | Decide | `architect` | jsmastery-pro/skills |
 | Build | `develop`, `verification-before-completion` | jsmastery-pro/skills, obra/superpowers |
-| Check | `check verify`, `test`, `check review`, `document` | jsmastery-pro/skills |
-| Review-first | `review-me` | this plugin (wraps mattpocock `code-review`) |
-| Teach-back | `teach-back` | this plugin |
+| Check | `check` (args `verify` / `review`), `test`, `document` | jsmastery-pro/skills |
+| Review-first | `dev-workflow:review-me` | this plugin (wraps `mattpocock-skills:code-review`) |
+| Teach-back | `dev-workflow:teach-back` | this plugin |
 | Bugs | `debug` | jsmastery-pro/skills |
 
-If a step's skill isn't installed, say which one is missing and how to install it (see this plugin's README). Don't quietly do the step another way.
+If a skill isn't installed or the call is refused, stop and say which one, and how to install it (see this plugin's README). Don't quietly do the step another way.
 
 Track the steps with a todo list. Stop at every checkpoint marked **⏸** and wait for Ashley.
 
+## 0. Resume or start
+
+Every ticket gets a folder, `<specs location>/<ticket-id-or-short-slug>/` (specs location from step 2; default `docs/specs/`). Its `ticket.md` holds the ticket word for word, its origin, and a `## Progress` checklist of steps 1–11. Tick a step and add a one-line outcome (depth chosen, decisions approved, test names agreed, open client questions) **each time a step finishes**. This file is how the work survives a long session, a summarized context, or tomorrow morning.
+
+If a folder for this ticket already exists, read its `ticket.md`, say which step you're resuming at, and continue from there. Don't redo finished steps.
+
 ## 1. Take in the ticket
 
-- Save the pasted ticket text word for word. Ask where it came from (system, person, date) if the text doesn't say. Ticket text plus origin is a **source** for every requirement it states.
+- Write the pasted ticket text word for word to `ticket.md`. Ask where it came from (system, person, date) if the text doesn't say. Ticket text plus origin is a **source** for every requirement it states.
 - If the ticket is really a bug ("X is broken", "error when..."), say so and offer to run `debug` instead of the feature path.
 
 ## 2. Make sure the project has context
@@ -36,12 +44,14 @@ Track the steps with a todo list. Stop at every checkpoint marked **⏸** and wa
 - Look for `AGENTS.md` / `CLAUDE.md` at the repo root.
   - **Missing:** recommend running `audit` once for this repo before going on. This happens once per codebase, not once per ticket.
   - **Present:** read it. Don't re-audit.
-- **Where decisions live:** find out whether the repo already records decisions or specs (for example `docs/adr/`, `docs/decisions/`, `docs/specs/`, a wiki link in the README). **Use what exists. Never invent a parallel system.** If nothing exists, use `docs/specs/` (what `architect` writes) plus a one-line index `docs/decisions.md`. Write the chosen location into `AGENTS.md` under a short `## Decisions` line, so every skill and teammate finds it.
+- **Where decisions live:** if `AGENTS.md` already has a `## Decisions` line, use it and skip the search. Otherwise find out whether the repo already records decisions or specs (for example `docs/adr/`, `docs/decisions/`, `docs/specs/`, a wiki link in the README). **Use what exists. Never invent a parallel system.** If nothing exists, use `docs/specs/` (what `architect` writes) plus a one-line index `docs/decisions.md`. Write the chosen location into `AGENTS.md` under `## Decisions`, so the next ticket skips the search.
+- **Team repo check:** if `CLAUDE.local.md` imports `@AGENTS.md`, this is a team repo set up with `scripts/local-setup.sh` (decision D18). Before writing any workflow file (`ticket.md`, specs, `docs/decisions.md`), run `git check-ignore -q <path>`. If it isn't ignored, don't write it. Tell Ashley that file would show up in the team's `git status`, and ask whether it belongs in the team's existing decision file instead.
 
 ## 3. Clarify (⏸)
 
 - Read the code the ticket touches **before** asking anything. Never ask what the code can answer.
-- Then run **`grill-me`** on the ticket: one question at a time, each with your recommended answer. Ashley prefers this style because it makes her think deeper.
+- **Small, clear tickets** (a typo, a copy change, a config value, or a change where the ticket and code leave nothing to decide): don't grill. Write your reading of the ticket in two or three lines and ask Ashley to confirm it. That confirmation is this checkpoint.
+- Otherwise run **`mattpocock-skills:grilling`** on the ticket: one question at a time, each with your recommended answer. Ashley prefers this style because it makes her think deeper.
 - Ask only what Ashley or the client alone can know (business rules, who's allowed to do what, edge cases the ticket skips). Recommend answers for things expertise settles.
 - Anything only the client can answer goes on an **Open questions for client** list. Ashley chooses: wait, or build on a written assumption.
 
@@ -84,11 +94,11 @@ Run the depth's checking steps in order: `check verify`, then `test`; for GA als
 
 ## 9. Review-first (⏸)
 
-For anything bigger than a one-line fix, run **`review-me`**: Ashley reviews first, then the AI reviewer, then the two are compared and her misses are logged.
+For anything bigger than a one-line fix, run **`dev-workflow:review-me`**: Ashley reviews first, then the AI reviewer, then the two are compared and her misses are logged.
 
 ## 10. Teach-back (⏸)
 
-For anything bigger than a one-line fix, run **`teach-back`**. Ashley explains the change in her own words before it goes to her lead.
+For anything bigger than a one-line fix, run **`dev-workflow:teach-back`**. Ashley explains the change in her own words before it goes to her lead.
 
 ## 11. Wrap up
 
@@ -103,4 +113,4 @@ Then suggest running `sync` around merge time.
 ## Never
 
 - Put client code, client data, patient data or names into Ashley's learning log. Log only the lesson.
-- Skip steps 3, 5, 6 or the tests to save time. Say how long a step will take instead, and let Ashley decide.
+- Skip steps 3, 5, 6 or the tests on your own to save time. You may *propose* a lighter version (as in step 3's small-ticket path). Say what it saves, and let Ashley decide.
