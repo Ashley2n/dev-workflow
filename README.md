@@ -4,14 +4,15 @@ My Claude Code engineering workflow, made to get work done **and** to make me a 
 
 At work, Claude writes most of the code and I steer: every decision needs a source, and I check that I can explain it before it ships. In personal projects, I write most of the code and Claude coaches. Both paths end with **me reviewing first** and **explaining the change back**, and my misses go into a learning log that decides what fundamentals I study next.
 
-Most of the workflow is **published skills used unchanged**. This repo adds only four small skills and a settings template.
+Most of the workflow is **published skills used unchanged**. This repo adds four small skills, a hidden handoff-rules skill, four agents and a settings template.
 
 ## How it fits together
 
 ```
 Work ticket   /work-ticket <paste ticket>
-  audit (once per repo) → grilling → architect (decision table + sources) → test cases
-  → develop (Claude writes) → check verify → test → [GA: check review → document]
+  audit (once per repo) → grilling → po agent (Story Card) → architect (decision table + sources)
+  → qa agent (test cases) → dev agent (builds) → qa agent (verdict per AC, max 3 loops)
+  → [GA: check review → document]
   → review-me → teach-back → client summary
 
 New project   /new-project <idea>
@@ -28,6 +29,9 @@ New project   /new-project <idea>
 | `/new-project` | Greenfield path with coach mode on. Applies my stack rule: a clear winner wins, otherwise C# / ASP.NET Core / Blazor. |
 | `/review-me` | I review the diff first (with `checklist.md`), then Matt Pocock's `code-review` runs, then the two are compared and my misses are logged. |
 | `/teach-back` | Two or three "why" questions about the change, answered from memory, graded, with gaps logged. |
+| `agents/po.md`, `dev.md`, `qa.md` | PO writes the Story Card, Dev builds it test-first and sources every decision, QA plans tests from the card and then gives a verdict per acceptance criterion. Adapted from my Grok-Team prompts. `/work-ticket` delegates to them; they never ask me anything, they stop and return questions. |
+| `agents/conductor.md` | For ad-hoc tasks that aren't tickets: routes one clear task through PO, Dev and QA and returns one report. Runs only when I name it: `@"dev-workflow:conductor (agent)" <task>`. |
+| `team-handoffs` (hidden skill) | The one copy of the handoff rules and formats (Story Card, Build Packet, QA Report, 3-loop cap) that `/work-ticket` and the agents all read. |
 | `templates/user-claude.md` | My preferences (source rules, depth, stack rule, learning-log path), appended to `~/.claude/CLAUDE.md`. |
 | `scripts/local-setup.sh` | For team repos. Keeps AGENTS.md, CLAUDE.local.md and docs/specs, scope and reviews out of git via `.git/info/exclude`, and makes CLAUDE.local.md import `@AGENTS.md`. Never touches the team's CLAUDE.md. |
 

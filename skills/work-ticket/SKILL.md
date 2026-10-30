@@ -19,18 +19,29 @@ Invoke each skill with the Skill tool by the exact name below. Plugin skills nee
 | Clarify | `mattpocock-skills:grilling` | mattpocock/skills (`grill-me` is user-only, so it can't be called from here) |
 | Decide | `architect` | jsmastery-pro/skills |
 | Build | `develop`, `verification-before-completion` | jsmastery-pro/skills, obra/superpowers |
-| Check | `check` (args `verify` / `review`), `test`, `document` | jsmastery-pro/skills |
+| Check | `check` (args `verify` / `review`), `document` | jsmastery-pro/skills (tests are written by `dev-workflow:dev` test-first, not `test`) |
 | Review-first | `dev-workflow:review-me` | this plugin (wraps `mattpocock-skills:code-review`) |
 | Teach-back | `dev-workflow:teach-back` | this plugin |
 | Bugs | `debug` | jsmastery-pro/skills |
 
 If a skill isn't installed or the call is refused, stop and say which one, and how to install it (see this plugin's README). Don't quietly do the step another way.
 
+**Agents (D21–D22).** You are the conductor: grilling, `architect` and every ⏸ checkpoint stay with you in the main session, because subagents can't ask Ashley questions. The writing, building and checking go to this plugin's agents. First invoke **`dev-workflow:team-handoffs`** and follow its flow, formats and loop cap.
+
+| Step | Agent | Gets | Returns |
+|---|---|---|---|
+| 3 | `dev-workflow:po` | `ticket.md` + Ashley's grilling answers | Story Card → `story-card.md` |
+| 6 | `dev-workflow:qa` (pass 1) | Story Card only | Test Plan, the draft test names for the checkpoint |
+| 7 | `dev-workflow:dev` | Story Card + approved decisions + approved test names | Build Packet → `build-packet.md` |
+| 8 | `dev-workflow:qa` (pass 2) | Story Card + changed files + loop number | QA Report → `qa-report.md` |
+
+**Small, clear tickets** (step 3's small-ticket path): write the one-AC Story Card and the test names yourself in the team-handoffs formats, and delegate only `dev-workflow:dev` and `dev-workflow:qa` pass 2. Each agent re-reads the code from scratch, so skipping PO and QA pass 1 halves the cost where they add little. The step 6 checkpoint still happens.
+
 Track the steps with a todo list. Stop at every checkpoint marked **⏸** and wait for Ashley.
 
 ## 0. Resume or start
 
-Every ticket gets a folder, `<specs location>/<ticket-id-or-short-slug>/` (specs location from step 2; default `docs/specs/`). Its `ticket.md` holds the ticket word for word, its origin, and a `## Progress` checklist of steps 1–11. Tick a step and add a one-line outcome (depth chosen, decisions approved, test names agreed, open client questions) **each time a step finishes**. This file is how the work survives a long session, a summarized context, or tomorrow morning.
+Every ticket gets a folder, `<specs location>/<ticket-id-or-short-slug>/` (specs location from step 2; default `docs/specs/`). Agent handoffs (`story-card.md`, `build-packet.md`, `qa-report.md`) are saved there too. Its `ticket.md` holds the ticket word for word, its origin, and a `## Progress` checklist of steps 1–11. Tick a step and add a one-line outcome (depth chosen, decisions approved, test names agreed, open client questions) **each time a step finishes**. This file is how the work survives a long session, a summarized context, or tomorrow morning.
 
 If a folder for this ticket already exists, read its `ticket.md`, say which step you're resuming at, and continue from there. Don't redo finished steps.
 
@@ -54,6 +65,7 @@ If a folder for this ticket already exists, read its `ticket.md`, say which step
 - Otherwise run **`mattpocock-skills:grilling`** on the ticket: one question at a time, each with your recommended answer. Ashley prefers this style because it makes her think deeper.
 - Ask only what Ashley or the client alone can know (business rules, who's allowed to do what, edge cases the ticket skips). Recommend answers for things expertise settles.
 - Anything only the client can answer goes on an **Open questions for client** list. Ashley chooses: wait, or build on a written assumption.
+- Once Ashley confirms, delegate the Story Card to **`dev-workflow:po`** with the ticket and her answers. Show her the card. If it comes back NOT READY, grill the UNRESOLVED questions and send them back to PO. The checkpoint passes when Ashley accepts a READY card; its ACs are the acceptance criteria for every later step.
 
 ## 4. Pick the checking depth
 
@@ -82,15 +94,22 @@ Explain each row so Ashley could say it out loud to her lead. Wait for her appro
 
 ## 6. Agree the test cases (⏸)
 
-Before any code, list the behaviors as plain test names ("returns 404 when the patient isn't found", "rejects an end date before the start date"), each tied to an acceptance criterion. Ashley approves, adds or removes cases. This is the most important learning step at work. Don't skip it on small tickets.
+Before any code, list the behaviors as plain test names ("returns 404 when the patient isn't found", "rejects an end date before the start date"), each tied to an acceptance criterion. Draft them with **`dev-workflow:qa`** pass 1 (Story Card only, so the cases come from the card and not from a plan for the code). Ashley approves, adds or removes cases. This is the most important learning step at work. Don't skip it on small tickets.
 
 ## 7. Build
 
-Run **`develop`** against the approved spec, test-first. Follow `verification-before-completion`: no "done" or "passing" without running the command and showing its output. If `develop` stops because a decision is owed, go back to step 5. Don't guess.
+Delegate the build to **`dev-workflow:dev`** with the Story Card, the approved decisions and the approved test names. It runs `develop` test-first and follows `verification-before-completion`: no "done" or "passing" without the command's real output in the Build Packet. If it returns `NEEDS ASHLEY` rows, go back to step 5 with them. Don't guess.
+
+**UI tickets** (pages, components, layout, styling): run `develop` here in the main session instead of delegating, because its UI path asks Ashley questions as it goes and a subagent can't. Still return a Build Packet before step 8.
 
 ## 8. Check
 
-Run the depth's checking steps in order: `check verify`, then `test`; for GA also `check review` and `document`. If anything fails, use `debug`: root cause first, never stacked guesses.
+Delegate **`dev-workflow:qa`** pass 2 with the Story Card, the changed files from the Build Packet and the loop number (never Dev's reasoning). It runs the project's existing tests and build, plus `check verify` for user-facing behavior, and returns a verdict per AC. It doesn't write tests: a missing test comes back as a Bug card for Dev. BLOCKED ACs come with a question for Ashley (for example how to start the app); ask her, then run QA again.
+- **FAIL, Cause: Code:** back to `dev-workflow:dev` with the Bug card. Use `debug` thinking: root cause first, never stacked guesses.
+- **FAIL, Cause: Spec:** back to `dev-workflow:po` for v<n+1>; Ashley confirms the change before Dev builds again.
+- **Loop 3 still failing:** QA's Escalation goes to Ashley. Stop.
+
+On overall PASS, for GA also run `check review` and `document` here in the main session.
 
 ## 9. Review-first (⏸)
 
