@@ -43,4 +43,4 @@ Append each **partly** or **missed** answer to the learning log (path in `~/.cla
 - YYYY-MM-DD · teach-back · <topic tag> · <the question, made general> · <the key idea she was missing> · <source link>
 ```
 
-Make the question general, so no client details leak: "why validate in the service layer", not the client's feature name. **Never log client code, client data, patient data or client names.**
+Make the question general, so no client details leak: "why validate in the service layer", not the client's feature name. **Never log client code, client data, patient data, client names or client repo paths.**

@@ -20,5 +20,5 @@ When clarifying, ask one question at a time with your recommended answer (grill-
 
 ## Learning log
 Path: `~/Documents/03-Resources/MyVault/02-Areas/Learning/review-log.md`
-Never write client code, client data, patient data or client names there. Only the lesson.
+Never write client code, client data, patient data, client names or client repo paths there. Only the lesson.
 <!-- dev-workflow:end -->
