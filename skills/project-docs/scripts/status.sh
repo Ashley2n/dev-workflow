@@ -34,7 +34,10 @@ fi
 SPEC_NUMS=""; SPEC_COUNT=0
 if [ -d "$BASE/specs" ]; then
   # /architect names specs NNNN-title.md, or a folder NNNN-title/ for an umbrella (one number each).
-  SPEC_NUMS="$(find "$BASE/specs" -maxdepth 2 -name '[0-9][0-9][0-9][0-9]-*' | sed -E 's#.*/([0-9]{4})-[^/]*$#\1#' | sort -u)"
+  # Keep only lines that are exactly four digits: a file name with a newline or odd characters must never
+  # reach the arithmetic below, because bash evaluates expressions like a[$(cmd)] inside (( )).
+  SPEC_NUMS="$(find "$BASE/specs" -maxdepth 2 -name '[0-9][0-9][0-9][0-9]-*' \
+    | sed -nE 's#.*/([0-9]{4})-[^/]*$#\1#p' | grep -xE '[0-9]{4}' | sort -u || true)"
   [ -n "$SPEC_NUMS" ] && SPEC_COUNT="$(printf '%s\n' "$SPEC_NUMS" | wc -l | tr -d ' ')"
 fi
 
@@ -67,6 +70,8 @@ analyze() {
   read -r lo hi <<<"$(printf '%s' "$chk" | sed -nE 's/.*specs ([0-9]{4})((–|-)([0-9]{4}))?.*/\1 \4/p')"
   hi="${hi:-${lo:-0}}"
   for n in $SPEC_NUMS; do
+    [[ $n =~ ^[0-9]{4}$ ]] || continue
+    [[ $hi =~ ^[0-9]{4}$ ]] || hi=0
     if (( 10#$n > 10#$hi )); then
       printf -v "ST_$name" '%s' stale; printf -v "RS_$name" '%s' "spec $n is not in its Checked against line"; return 0
     fi
