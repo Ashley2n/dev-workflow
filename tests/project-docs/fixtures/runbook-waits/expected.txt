@@ -1,0 +1,14 @@
+Artifact base: docs/ (personal repo)
+Scope: docs/scope/ (1 file)
+Specs: 1 (0001)
+decisions.md: none
+
+| Document | Status | Ready? |
+|---|---|---|
+| prd.md | current | yes |
+| sdd.md | current | yes |
+| test-plan.md | current | yes |
+| runbook.md | missing | no: needs something that runs |
+
+Next: none
+Why: runbook.md waits until something runs.

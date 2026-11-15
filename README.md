@@ -29,6 +29,7 @@ New project   /new-project <idea>
 | `/new-project` | Greenfield path with coach mode on. Applies my stack rule: a clear winner wins, otherwise C# / ASP.NET Core / Blazor. |
 | `/review-me` | I review the diff first (with `checklist.md`), then Matt Pocock's `code-review` runs, then the two are compared and my misses are logged. |
 | `/teach-back` | Two or three "why" questions about the change, answered from memory, graded, with gaps logged. |
+| `/project-docs` | Writes and tracks the PRD, SDD, test plan and runbook. With no argument it prints a status table and the one next step (`skills/project-docs/scripts/status.sh`, tested by `bash tests/project-docs/run.sh`). Personal repos use `docs/`; work repos use a local-only `.workflow/`. |
 | `agents/po.md`, `dev.md`, `qa.md` | PO writes the Story Card, Dev builds it test-first and sources every decision, QA plans tests from the card and then gives a verdict per acceptance criterion. Adapted from my Grok-Team prompts. `/work-ticket` delegates to them; they never ask me anything, they stop and return questions. |
 | `agents/conductor.md` | For ad-hoc tasks that aren't tickets: routes one clear task through PO, Dev and QA and returns one report. Runs only when I name it: `@"dev-workflow:conductor (agent)" <task>`. |
 | `team-handoffs` (hidden skill) | The one copy of the handoff rules and formats (Story Card, Build Packet, QA Report, 3-loop cap) that `/work-ticket` and the agents all read. |
