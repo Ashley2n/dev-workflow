@@ -1,0 +1,14 @@
+Artifact base: docs/ (personal repo)
+Scope: docs/scope/ (1 file)
+Specs: 3 (0001, 0003, 0004)
+decisions.md: none
+
+| Document | Status | Ready? |
+|---|---|---|
+| prd.md | stale | yes |
+| sdd.md | missing | no: needs a current PRD |
+| test-plan.md | missing | yes |
+| runbook.md | missing | no: needs something that runs |
+
+Next: /project-docs prd
+Why: prd.md is stale: spec 0001 is not in its Checked against line.

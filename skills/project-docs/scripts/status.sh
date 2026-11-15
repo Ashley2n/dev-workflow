@@ -17,6 +17,8 @@ if [ -n "$(git ls-files -- .workflow | head -n 1)" ]; then
   echo "STOP: .workflow/ is tracked by git, so it belongs to the team. Ask Ashley for another artifact base name before writing anything."
   exit 3
 fi
+# Work repo = .workflow/ exists, or CLAUDE.local.md imports @AGENTS.md or names the artifact base. The CLAUDE.local.md
+# signal is the same one skills/work-ticket/SKILL.md step 2 uses to spot a team repo set up by local-setup.sh (D18, D26).
 if [ -d .workflow ] \
   || { [ -f CLAUDE.local.md ] && grep -qE '@AGENTS\.md|Artifact base in this repo is' CLAUDE.local.md; }; then
   BASE=".workflow"; LABEL=".workflow/ (work repo, local only)"
@@ -37,7 +39,9 @@ if [ -d "$BASE/specs" ]; then
   # Keep only lines that are exactly four digits: a file name with a newline or odd characters must never
   # reach the arithmetic below, because bash evaluates expressions like a[$(cmd)] inside (( )).
   SPEC_NUMS="$(find "$BASE/specs" -maxdepth 2 -name '[0-9][0-9][0-9][0-9]-*' \
-    | sed -nE 's#.*/([0-9]{4})-[^/]*$#\1#p' | grep -xE '[0-9]{4}' | sort -u || true)"
+    | sed -nE 's#.*/([0-9]{4})-[^/]*$#\1#p' | { grep -xE '[0-9]{4}' || true; } | sort -u)"
+  # Only grep's "no match" (exit 1) is allowed to pass; a find error (for example an unreadable folder)
+  # fails the script instead of printing "Specs: none".
   [ -n "$SPEC_NUMS" ] && SPEC_COUNT="$(printf '%s\n' "$SPEC_NUMS" | wc -l | tr -d ' ')"
 fi
 
@@ -68,11 +72,15 @@ analyze() {
   fi
   # specs 0001 | specs 0001-0003 | specs 0001–0003 (en dash) | specs none
   read -r lo hi <<<"$(printf '%s' "$chk" | sed -nE 's/.*specs ([0-9]{4})((–|-)([0-9]{4}))?.*/\1 \4/p')"
-  hi="${hi:-${lo:-0}}"
+  hi="${hi:-${lo:-0}}"; lo="${lo:-0}"
+  # Defence in depth: sed only captures four digits, but these values feed (( )), which executes
+  # expressions like a[$(cmd)]. Re-check so a future edit to the pattern cannot open that hole.
+  [[ $lo =~ ^[0-9]+$ ]] || lo=0
+  [[ $hi =~ ^[0-9]+$ ]] || hi=0
   for n in $SPEC_NUMS; do
-    [[ $n =~ ^[0-9]{4}$ ]] || continue
-    [[ $hi =~ ^[0-9]{4}$ ]] || hi=0
-    if (( 10#$n > 10#$hi )); then
+    [[ $n =~ ^[0-9]{4}$ ]] || continue   # same reason: SPEC_NUMS is already filtered to four digits
+    # Both ends of the range count: a spec below the first listed number is not covered either.
+    if (( 10#$n > 10#$hi || 10#$n < 10#$lo )); then
       printf -v "ST_$name" '%s' stale; printf -v "RS_$name" '%s' "spec $n is not in its Checked against line"; return 0
     fi
   done

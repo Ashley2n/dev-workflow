@@ -38,5 +38,5 @@ Writes four documents on top of the existing scope, specs and reviews (D25). Sta
 |---|---|
 | PRD | a scope exists |
 | SDD | the PRD is `current` and at least one `/architect` spec exists |
-| Test plan | the PRD has a line starting `Acceptance criteria:` and is past `skeleton` |
+| Test plan | the PRD contains the text `Acceptance criteria:` (any capitalisation) and is past `skeleton` |
 | Runbook | a project manifest or start file exists (`*.csproj`, `package.json`, `Dockerfile`, `Makefile`, ...) |
