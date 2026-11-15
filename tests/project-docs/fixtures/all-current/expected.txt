@@ -1,0 +1,14 @@
+Artifact base: docs/ (personal repo)
+Scope: docs/scope/ (1 file)
+Specs: 2 (0001, 0002)
+decisions.md: 2 rows (read-only)
+
+| Document | Status | Ready? |
+|---|---|---|
+| prd.md | current | yes |
+| sdd.md | current | yes |
+| test-plan.md | current | yes |
+| runbook.md | current | yes |
+
+Next: none
+Why: all documents are current.

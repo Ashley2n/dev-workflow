@@ -1,0 +1,14 @@
+Artifact base: docs/ (personal repo)
+Scope: docs/scope/ (1 file)
+Specs: none
+decisions.md: none
+
+| Document | Status | Ready? |
+|---|---|---|
+| prd.md | missing | yes |
+| sdd.md | missing | no: needs a current PRD and one spec |
+| test-plan.md | missing | no: needs PRD acceptance criteria |
+| runbook.md | missing | no: needs something that runs |
+
+Next: /project-docs prd
+Why: prd.md is missing.
