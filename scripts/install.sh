@@ -38,15 +38,12 @@ claude plugin install dev-workflow@ashley-dev-workflow --scope user \
   || echo "   (install failed; run: claude plugin install dev-workflow@ashley-dev-workflow)"
 
 say "Personal preferences -> ~/.claude/CLAUDE.md"
-TEMPLATE="$SCRIPT_DIR/../templates/user-claude.md"
-mkdir -p "$HOME/.claude"
-touch "$HOME/.claude/CLAUDE.md"
-if grep -q "dev-workflow:start" "$HOME/.claude/CLAUDE.md"; then
-  echo "   Already present; edit ~/.claude/CLAUDE.md by hand to change it."
-else
-  printf '\n' >> "$HOME/.claude/CLAUDE.md"
-  cat "$TEMPLATE" >> "$HOME/.claude/CLAUDE.md"
-  echo "   Added. On a work machine, fix the Learning log path if the vault lives elsewhere."
+# Replaces only the text between the dev-workflow markers; backs up and prints a diff first (D47).
+if ! bash "$SCRIPT_DIR/claude-block.sh" "$REPO_DIR/templates/user-claude.md" "$HOME/.claude/CLAUDE.md"; then
+  echo "   Stopped: ~/.claude/CLAUDE.md was not changed." >&2
+  exit 1
 fi
+echo "   Edits inside the markers are replaced on the next run; keep your own rules outside them."
+echo "   On a work machine, fix the Learning log path if the vault lives elsewhere."
 
 say "Done. Restart Claude Code, then try /work-ticket or /new-project."
