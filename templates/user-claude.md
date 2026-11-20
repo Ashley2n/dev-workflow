@@ -24,7 +24,7 @@ When clarifying, ask one question at a time with your recommended answer (grill-
 
 ## Pitfalls (work repos)
 - Read `.workflow/pitfalls.md` before every `/check review` and `check verify`. Test each pitfall that applies to the changed screens. The file is local; never commit it.
-- When a bug turns up after a task was marked done, the fixing session adds an entry (symptom, platform, trigger, how to check) and tells me in one line. Keep the file to about 30 entries.
+- When a bug turns up after a task was marked done, the fixing session adds an entry (symptom, platform, trigger, how to check) and tells me in one line. Keep the file to about 30 entries; merge or delete stale ones at the monthly metrics run.
 
 ## Git and shell
 - Fetch before compare: `git fetch origin`, then compare against `origin/<base>` for every review, merge check and PR text.
@@ -34,7 +34,7 @@ When clarifying, ask one question at a time with your recommended answer (grill-
 ## Ticket log (work)
 When a work ticket's PR is ready, print one row for my metrics, ready to paste:
 `| W-NN | YYYY-MM-DD | hours (rough) | review rounds | escaped defects | found by | notes |`
-Codes and counts only, notes included: no client names, ticket titles or code.
+Codes and counts only: no client names, ticket titles or code. Notes are one or two words naming the kind of bug, like `iOS layout` or `stale base`.
 
 ## Learning log
 Path: `~/Documents/03-Resources/MyVault/02-Areas/Learning/review-log.md`

@@ -6,7 +6,8 @@
 #     prints a diff, and replaces only the lines from the start marker to the end marker.
 #   - Block identical: says so and changes nothing.
 #   - Markers broken (start without end, end first, more than one): changes nothing, exits 1.
-# Plain bash, awk, head and tail, so it runs on macOS and Git Bash on Windows.
+# Plain bash and POSIX tools (awk, sed -n, head, tail, cmp, diff, mktemp), no GNU-only flags,
+# so it runs on macOS and Git Bash on Windows.
 # Usage: bash scripts/claude-block.sh <template> <target CLAUDE.md>
 set -euo pipefail
 

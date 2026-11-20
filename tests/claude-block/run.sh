@@ -115,14 +115,14 @@ ALL=(missing_file no_block_appends identical_block changed_block_replaced rerun_
      start_without_end end_without_start end_before_start two_blocks install_uses_helper)
 if [ "$#" -gt 0 ]; then names=("$@"); else names=("${ALL[@]}"); fi
 
-pass=0; fail=0
+passed=0; failed=0
 for name in "${names[@]}"; do
   if "case_$name"; then
-    printf 'PASS  %s\n' "$name"; pass=$((pass + 1))
+    printf 'PASS  %s\n' "$name"; passed=$((passed + 1))
   else
-    printf 'FAIL  %s\n' "$name"; fail=$((fail + 1))
+    printf 'FAIL  %s\n' "$name"; failed=$((failed + 1))
   fi
 done
 
-printf '\n%d passed, %d failed\n' "$pass" "$fail"
-[ "$fail" -eq 0 ]
+printf '\n%d passed, %d failed\n' "$passed" "$failed"
+[ "$failed" -eq 0 ]
