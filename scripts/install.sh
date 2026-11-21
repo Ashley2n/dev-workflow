@@ -38,6 +38,28 @@ claude plugin marketplace add Ashley2n/dev-workflow 2>/dev/null \
 claude plugin install dev-workflow@ashley-dev-workflow --scope user \
   || echo "   (install failed; run: claude plugin install dev-workflow@ashley-dev-workflow)"
 
+say "Upstream scout and researcher agents -> ~/.claude/agents (D56)"
+# Plain names, because develop asks for the scout type and plugin agents are namespaced.
+# A different file already there is backed up first, never overwritten blind.
+AGENTS_DIR="$HOME/.claude/agents"
+mkdir -p "$AGENTS_DIR"
+for name in scout.md researcher.md; do
+  src="$REPO_DIR/templates/agents/$name"
+  dest="$AGENTS_DIR/$name"
+  if [ -e "$dest" ] && cmp -s "$src" "$dest"; then
+    echo "   $name: up to date"
+    continue
+  fi
+  if [ -e "$dest" ]; then
+    backup="$dest.bak-$(date +%Y%m%d-%H%M%S)"
+    if [ -e "$backup" ]; then backup="$backup-$$"; fi
+    cp -p "$dest" "$backup"
+    echo "   $name: yours differed, backed up to $backup"
+  fi
+  cp "$src" "$dest"
+  echo "   $name: installed"
+done
+
 say "Personal preferences -> ~/.claude/CLAUDE.md"
 # Replaces only the text between the dev-workflow markers; backs up and prints a diff first (D47).
 if ! bash "$SCRIPT_DIR/claude-block.sh" "$REPO_DIR/templates/user-claude.md" "$HOME/.claude/CLAUDE.md"; then
@@ -45,6 +67,6 @@ if ! bash "$SCRIPT_DIR/claude-block.sh" "$REPO_DIR/templates/user-claude.md" "$H
   exit 1
 fi
 echo "   Edits inside the markers are replaced on the next run; keep your own rules outside them."
-echo "   On a work machine, fix the Learning log path if the vault lives elsewhere."
+echo "   On a work machine, fix the Coding standards and Learning log paths if the vault lives elsewhere."
 
 say "Done. Restart Claude Code, then try /work-ticket or /new-project."

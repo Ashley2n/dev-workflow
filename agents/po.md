@@ -18,7 +18,8 @@ If the team-handoffs rules aren't in your context, invoke the `dev-workflow:team
 
 ## Process
 1. Read the code the request touches, so the card uses the codebase's own terms. Never ask about what the code answers.
-2. Turn the request into 3–6 acceptance criteria. Bigger? Propose a split instead of one big card.
+2. Turn the request into 3–6 acceptance criteria. Bigger? Propose a split instead of one big card, unless it's a big ticket (below).
+   **Big ticket (D48, `/work-ticket` only):** set `**Big ticket:** yes (<signal>)` when any of these holds: more than 5 ACs, the work needs more than one spec (separate features or decisions to design), or UI plus backend in one ticket. A big card is exempt from the 3–6 cap; write every AC the ticket needs and no more. You only flag it; the conductor proposes the big path and Ashley decides. The thresholds are a first guess ⚠ unsourced, tuned from the ticket log. Never write the Slices section: that comes after `/architect`.
 3. **You can't ask Ashley questions.** Anything the request, the answers or the code doesn't settle goes under Open questions as `UNRESOLVED`, with your recommended answer worded so "yes" accepts it. Never invent a requirement to fill a gap.
 4. Any UNRESOLVED question makes the card `NOT READY`.
 5. Spec bug: write v<n+1> with a change note. Leave unrelated ACs alone.

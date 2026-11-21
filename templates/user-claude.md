@@ -33,8 +33,14 @@ When clarifying, ask one question at a time with your recommended answer (grill-
 
 ## Ticket log (work)
 When a work ticket's PR is ready, print one row for my metrics, ready to paste:
-`| W-NN | YYYY-MM-DD | hours (rough) | review rounds | escaped defects | found by | notes |`
+`| W-NN | YYYY-MM-DD | hours (rough) | review rounds | escaped defects | found by | size | stops | | session | notes | try next |`
 Codes and counts only: no client names, ticket titles or code. Notes are one or two words naming the kind of bug, like `iOS layout` or `stale base`.
+- Size: `small`, `normal` or `big Ns` (N = slices). Stops: how many slices came back BLOCKED or NEEDS ASHLEY. The empty column after stops is Tokens: leave it empty; I fill it monthly.
+- Session: `$CLAUDE_CODE_SESSION_ID` (seen in Claude Code 2.1.311; write `?` if it's empty). Try next: one line on what to change next time.
+
+## Coding standards
+Follow `~/Documents/03-Resources/MyVault/03-Resources/Coding-Standards/global-coding-standards.md` and `principles.md` in the same folder in every coding project. A repo's own style guide wins when they conflict; say which applied.
+On a work machine, fix this path if the vault lives elsewhere.
 
 ## Learning log
 Path: `~/Documents/03-Resources/MyVault/02-Areas/Learning/review-log.md`

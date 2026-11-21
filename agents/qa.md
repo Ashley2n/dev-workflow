@@ -14,13 +14,24 @@ If the team-handoffs rules aren't in your context, invoke the `dev-workflow:team
 ## Pass 1: Test Plan
 Input: the Story Card only. Write the Test Plan: plain test names per AC (happy, edge, error), manual steps, and spec gaps. Flag any AC you can't test.
 
+**Big ticket (D58):** you also get the spec's path. Write the test names first, from the card. Then read only the spec's `## Build plan` and check the card's Slices, one yes/no row each:
+- every AC is in exactly one slice
+- each slice has a test that runs on its own
+- no slice is blocked by a later slice
+- no two slices change the same file without a Blocked by between them (only when the spec lists files)
+Any "no" becomes an UNRESOLVED spec gap with your fix. You don't read code here, so the file check is only as good as the spec.
+
 ## Pass 2: QA Report
 Input: the Story Card, the list of changed files and the loop number. Card ID and version must match what you were given before; if not, stop and say so.
 1. Read the changed files and their tests.
 2. Run the checks yourself: the project's **existing** test and build commands (from `AGENTS.md`, `test-preferences.json` or the README), and `check verify` when the card has user-facing behavior. Paste real output as evidence. Don't use the `test` skill: it writes tests, and Dev owns those. A missing test is a Bug card (Cause: Code).
    If `check verify` needs to ask how to start the app or which flow to run, mark those ACs BLOCKED and return the question.
 3. Give a verdict per AC, then one Bug card per FAIL.
-4. Standards check: flag silent failures (swallowed errors, empty catch, defaults that hide a problem) and features no AC asked for.
+4. **Standards (D64):** run the yes/no check of each principle in `principles.md` (path in `~/.claude/CLAUDE.md` under **Coding standards**) that applies to the changed files. P-STD-3 (silent failures: swallowed errors, empty catch, defaults that hide a problem) and P-STD-1 (features no AC asked for) always apply. File not found? Say so in the report and run those two.
+5. **Security (D63), every ticket:** check the changed files against `/check review`'s Security list: unvalidated input, injection, missing auth checks, secrets in code or logs, sensitive data exposure. Add P-ARCH-3: could a new caller skip an access check by forgetting something? Each finding is a Bug card.
+
+## Slice check (big tickets, D51)
+Only on GA tickets and on slices with UI ACs, right after the slice's gate. Input: the card, the slice ID and that slice's changed files. Verdict only for that slice's ACs, plus a regression listing: the full test suite's result and any earlier slice whose files this slice changed. Report with `Slice: S<m>`. The QA pass 2 after the last slice still covers every AC.
 
 ## Rules
 - You don't edit production code or tests. Gaps become Bug cards.

@@ -12,8 +12,11 @@ Most of the workflow is **published skills used unchanged**. This repo adds four
 Work ticket   /work-ticket <paste ticket>
   audit (once per repo) → grilling → po agent (Story Card) → architect (decision table + sources)
   → qa agent (test cases) → dev agent (builds) → qa agent (verdict per AC, max 3 loops)
-  → [GA: check review → document]
+  → [GA: check review → document → security-review]
   → review-me → teach-back → client summary
+  Big ticket (PO flags it, I confirm): after architect, group the spec's Build plan into slices,
+  scout maps the area once, then per slice: dev builds → gate → [GA or UI: qa slice check] → local commit;
+  one qa pass 2 at the end, review-me over base..HEAD
 
 New project   /new-project <idea>
   scope → architect the stack → scaffold → audit
@@ -25,7 +28,7 @@ New project   /new-project <idea>
 
 | Skill | What it does |
 |---|---|
-| `/work-ticket` | Runs a pasted ticket through the work path above. Stops for my approval at clarify, decisions, test cases, review and teach-back. |
+| `/work-ticket` | Runs a pasted ticket through the work path above. Stops for my approval at clarify, decisions, test cases, review and teach-back. Big tickets (more than 5 ACs, more than one spec, or UI plus backend) are built slice by slice, each gated and committed locally (v0.7.0). |
 | `/new-project` | Greenfield path with coach mode on. Applies my stack rule: a clear winner wins, otherwise C# / ASP.NET Core / Blazor. |
 | `/review-me` | I review the diff first (with `checklist.md`), then Matt Pocock's `code-review` runs, then the two are compared and my misses are logged. |
 | `/teach-back` | Two or three "why" questions about the change, answered from memory, graded, with gaps logged. |
@@ -33,7 +36,8 @@ New project   /new-project <idea>
 | `agents/po.md`, `dev.md`, `qa.md` | PO writes the Story Card, Dev builds it test-first and sources every decision, QA plans tests from the card and then gives a verdict per acceptance criterion. Adapted from my Grok-Team prompts. `/work-ticket` delegates to them; they never ask me anything, they stop and return questions. |
 | `agents/conductor.md` | For ad-hoc tasks that aren't tickets: routes one clear task through PO, Dev and QA and returns one report. Runs only when I name it: `@"dev-workflow:conductor (agent)" <task>`. |
 | `team-handoffs` (hidden skill) | The one copy of the handoff rules and formats (Story Card, Build Packet, QA Report, 3-loop cap) that `/work-ticket` and the agents all read. |
-| `templates/user-claude.md` | My preferences (source rules, depth, stack rule, real-app evidence, pitfalls, git and shell safety, ticket-log row, learning-log path), kept in a marked block in `~/.claude/CLAUDE.md` by `install.sh`. |
+| `templates/user-claude.md` | My preferences (source rules, depth, stack rule, real-app evidence, pitfalls, git and shell safety, ticket-log row, coding-standards pointer, learning-log path), kept in a marked block in `~/.claude/CLAUDE.md` by `install.sh`. |
+| `templates/agents/` | Upstream `scout` and `researcher` agents from jsmastery-pro/skills (MIT, source in its README). `install.sh` copies them to `~/.claude/agents/`, backing up a different file first. `develop` and the big-ticket path ask for `scout` by that plain name. Tested by `bash tests/install-agents/run.sh`. |
 | `scripts/local-setup.sh` | For team repos. Keeps AGENTS.md, CLAUDE.local.md and docs/specs, scope and reviews out of git via `.git/info/exclude`, and makes CLAUDE.local.md import `@AGENTS.md`. Never touches the team's CLAUDE.md. |
 
 `/work-ticket` and `/new-project` only run when I type them (`disable-model-invocation: true`), so Claude never starts a ticket on its own. `/review-me` and `/teach-back` don't have that flag, because the pipelines have to call them, and Claude Code blocks calls to flagged skills. Their descriptions limit them to my request or a pipeline step. For the same reason the pipelines clarify with `mattpocock-skills:grilling`, not the user-only `grill-me`. Plugin skills are namespaced: `/dev-workflow:work-ticket`, or just `/work-ticket` when no other command has that name ([docs](https://code.claude.com/docs/en/skills)).
@@ -59,7 +63,7 @@ Just this plugin, without the published pieces: `/plugin install dev-workflow --
 
 Then restart Claude Code. On a work machine, check that the **Learning log** path in `~/.claude/CLAUDE.md` points at your vault.
 
-Re-running `install.sh` updates the rules in `~/.claude/CLAUDE.md` (since v0.6.0). It replaces only the text between `<!-- dev-workflow:start -->` and `<!-- dev-workflow:end -->`, backs the file up to `CLAUDE.md.bak-<timestamp>` and prints a diff first. Hand edits inside the markers are lost on the next run, so keep your own rules outside them. If the markers are broken it changes nothing and stops. `scripts/claude-block.sh` does this step, tested by `bash tests/claude-block/run.sh`. Optional steps (official plugins, `csharp-ls`) print a warning and go on when they fail, so the rules step still runs (v0.6.1).
+Re-running `install.sh` updates the rules in `~/.claude/CLAUDE.md` (since v0.6.0). It replaces only the text between `<!-- dev-workflow:start -->` and `<!-- dev-workflow:end -->`, backs the file up to `CLAUDE.md.bak-<timestamp>` and prints a diff first. Hand edits inside the markers are lost on the next run, so keep your own rules outside them. If the markers are broken it changes nothing and stops. `scripts/claude-block.sh` does this step, tested by `bash tests/claude-block/run.sh`. Optional steps (official plugins, `csharp-ls`) print a warning and go on when they fail, so the rules step still runs (v0.6.1). It also installs the `scout` and `researcher` agents into `~/.claude/agents/`; a different file already there is saved as `<name>.bak-<timestamp>` first (v0.7.0).
 
 In each **team repo**, once, before `/audit`:
 

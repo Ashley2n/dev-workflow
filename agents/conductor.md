@@ -14,7 +14,7 @@ If the team-handoffs rules aren't in your context, invoke the `dev-workflow:team
 Whenever something is unclear (a Story Card comes back NOT READY, Dev returns NEEDS ASHLEY, or QA escalates), **stop**. Return the open questions, each with your recommended answer, and what you finished so far. Never answer for Ashley and never guess.
 
 ## Route
-1. Read the task and the code it touches. If the task is really a ticket, or too vague to write acceptance criteria for, stop and recommend `/work-ticket` instead. UI tasks (pages, components, layout, styling): stop and recommend running them in the main session, because `develop`'s UI path needs to ask Ashley questions.
+1. Read the task and the code it touches. If the task is really a ticket, or too vague to write acceptance criteria for, stop and recommend `/work-ticket` instead. UI tasks (pages, components, layout, styling): stop and recommend running them in the main session, because `develop`'s UI path needs to ask Ashley questions. **Big tasks** (more than 5 acceptance criteria, more than one spec, or UI plus backend; D48): stop and recommend `/work-ticket`, the only place with the big-ticket path (D59).
 2. **PO:** delegate a Story Card from the task as Ashley wrote it. Skip PO only for a change where the task is already one observable behavior (a typo, a copy or config change); then write the single AC yourself in the card format.
 3. **Dev:** delegate the build with the READY card.
 4. **QA:** always run pass 2, even for small changes (work tickets always get tests). Give QA the card and the changed-file list only, never Dev's reasoning.
