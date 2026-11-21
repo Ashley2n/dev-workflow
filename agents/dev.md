@@ -20,20 +20,22 @@ If the team-handoffs rules aren't in your context, invoke the `dev-workflow:team
 - If `develop` asks a question, never answer it yourself. Return it as a `NEEDS ASHLEY` row with your recommended answer, and stop.
 
 ## Build
-1. Build test-first with the `develop` skill, against the card's ACs and the approved test cases.
+1. Build test-first with the `develop` skill, against the card's ACs and the approved test cases. Implement only the ACs; other ideas go under Suggestions, not in code.
 2. Follow `verification-before-completion`: run the tests and the build, and paste the real output into the packet. Never say "passing" without it.
 3. Return the Build Packet as your final message.
 
-## Coding standards
-Ashley's global standards. The repo's own style guide or a client's conventions win when they conflict; say which applied.
-1. YAGNI: don't build it until you need it. Implement only the ACs; other ideas go under Suggestions, not in code.
-2. DRY: extract a pattern after the second duplication, not before.
-3. Fail loudly: explicit errors beat silent failures.
-4. Simple first: write the obvious solution; optimize only if needed.
-5. Delete aggressively: less code, fewer bugs.
-6. Semantic naming: verbose, self-documenting names for variables, parameters and API endpoints, for humans and LLMs (`wait_until_obs_is_saved = true`, not `wait = true`).
+## Slice mode (big tickets, D65)
+The prompt names a slice: `S<m> = tasks <n>–<n>` of the spec's `## Build plan`, its ACs, Blocked by, the base commit and the ticket folder.
+1. **Build only that slice's tasks** with `develop`, and tick them in the Build plan as `develop` does. Don't save `verify.md`, mark the feature done, update the scope or ask `develop`'s Step 4 panels; the conductor does those once, after the last slice.
+2. **Explore cheaply (D53).** Read `exploration.md` in the ticket folder, and `git diff <base>..HEAD` for code earlier slices added. Use them as `develop`'s Step 2.5 map; brief the `scout` agent only for what they don't cover.
+3. **Slice gate (D51):** the slice's tests and the project's full existing test suite, green, shown by command output. A UI AC also needs the evidence in `~/.claude/CLAUDE.md` under "Done means checked in the real app", and if you changed files an earlier slice built, re-take that slice's screenshots.
+4. **Gate attempts (D55):** at most 3 fixes, root cause first, never stacked guesses. Still red: stop, and return BLOCKED in packet item 8 with the failing output and the likely cause. Leave the changes in the tree; the conductor saves them.
+5. **Delegated UI slice (D54):** every UI answer should be in the card. If `develop`'s UI path asks anything the card doesn't answer, return it as `NEEDS ASHLEY` and stop; the conductor moves the slice to the main session.
+
+## Coding standards (D64)
+Follow `global-coding-standards.md` and `principles.md` from the **Coding standards** section of `~/.claude/CLAUDE.md`. The repo's own style guide or a client's conventions win when they conflict; say which applied. Name the principle IDs you applied in packet item 7. If that section or either file is missing, say so in the QA note; don't work from memory.
 
 ## Rules
 - Comment only non-obvious lines.
-- Never commit, push or open a PR. Ashley does that after review.
+- Never commit, push or open a PR. On a big ticket the conductor commits each slice after its gate (D52); Ashley pushes after review.
 - Made-up data only in code, fixtures and examples.

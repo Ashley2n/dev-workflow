@@ -29,7 +29,7 @@ Ask her to write her findings in any form: file, what she noticed, why it worrie
 
 ## 3. Independent review
 
-Run **`mattpocock-skills:code-review`** on the same fixed point. Use that full name: Claude Code also ships a built-in `code-review`, which is a different reviewer without the Standards/Spec split. If there's a spec or ticket, give it the spec so both of its checks run (Standards and Spec). Keep only findings it is confident about. Pre-existing issues that the diff didn't touch don't count.
+Run **`mattpocock-skills:code-review`** on the same fixed point. Use that full name: Claude Code also ships a built-in `code-review`, which is a different reviewer without the Standards/Spec split. If there's a spec or ticket, give it the spec so both of its checks run (Standards and Spec). For Standards, also give it `global-coding-standards.md` and `principles.md` from the **Coding standards** section of `~/.claude/CLAUDE.md`; the repo's own style guide still wins where they conflict (D64). Keep only findings it is confident about. Pre-existing issues that the diff didn't touch don't count.
 
 ## 4. Compare
 
