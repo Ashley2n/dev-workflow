@@ -59,7 +59,7 @@ Just this plugin, without the published pieces: `/plugin install dev-workflow --
 
 Then restart Claude Code. On a work machine, check that the **Learning log** path in `~/.claude/CLAUDE.md` points at your vault.
 
-Re-running `install.sh` updates the rules in `~/.claude/CLAUDE.md` (since v0.6.0). It replaces only the text between `<!-- dev-workflow:start -->` and `<!-- dev-workflow:end -->`, backs the file up to `CLAUDE.md.bak-<timestamp>` and prints a diff first. Hand edits inside the markers are lost on the next run, so keep your own rules outside them. If the markers are broken it changes nothing and stops. `scripts/claude-block.sh` does this step, tested by `bash tests/claude-block/run.sh`.
+Re-running `install.sh` updates the rules in `~/.claude/CLAUDE.md` (since v0.6.0). It replaces only the text between `<!-- dev-workflow:start -->` and `<!-- dev-workflow:end -->`, backs the file up to `CLAUDE.md.bak-<timestamp>` and prints a diff first. Hand edits inside the markers are lost on the next run, so keep your own rules outside them. If the markers are broken it changes nothing and stops. `scripts/claude-block.sh` does this step, tested by `bash tests/claude-block/run.sh`. Optional steps (official plugins, `csharp-ls`) print a warning and go on when they fail, so the rules step still runs (v0.6.1).
 
 In each **team repo**, once, before `/audit`:
 

@@ -111,8 +111,25 @@ case_install_uses_helper() {
   [ -n "$OUT" ] || fail "install.sh does not call scripts/claude-block.sh"
 }
 
+# install.sh end to end with stub npx/claude/dotnet on PATH; dotnet tool always fails.
+# An optional step failing must not stop the run before the CLAUDE.md block.
+case_optional_step_failure_continues() {
+  setup optional_step_failure_continues
+  local bin="$TMP/optional_step_failure_continues/bin"
+  mkdir -p "$bin"
+  printf '#!/bin/sh\nexit 0\n' > "$bin/npx"
+  printf '#!/bin/sh\nexit 0\n' > "$bin/claude"
+  printf '#!/bin/sh\necho "dotnet stub: tool failed" >&2\nexit 1\n' > "$bin/dotnet"
+  chmod +x "$bin/npx" "$bin/claude" "$bin/dotnet"
+  OUT="$(HOME="$H" PATH="$bin:$PATH" bash "$REPO/scripts/install.sh" 2>&1)"; CODE=$?
+  [ "$CODE" -eq 0 ] || fail "exit $CODE" || return 1
+  grep -qF "$START" "$F" || fail "CLAUDE.md block not written" || return 1
+  printf '%s' "$OUT" | grep -q "csharp-ls" || fail "no warning about csharp-ls"
+}
+
 ALL=(missing_file no_block_appends identical_block changed_block_replaced rerun_is_up_to_date
-     start_without_end end_without_start end_before_start two_blocks install_uses_helper)
+     start_without_end end_without_start end_before_start two_blocks install_uses_helper
+     optional_step_failure_continues)
 if [ "$#" -gt 0 ]; then names=("$@"); else names=("${ALL[@]}"); fi
 
 passed=0; failed=0

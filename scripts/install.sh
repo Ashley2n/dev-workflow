@@ -21,7 +21,8 @@ echo "   /new-project turns it on per personal repo with --scope local."
 
 say "C# language server for csharp-lsp"
 if command -v dotnet >/dev/null 2>&1; then
-  dotnet tool install --global csharp-ls 2>/dev/null || dotnet tool update --global csharp-ls
+  dotnet tool install --global csharp-ls 2>/dev/null || dotnet tool update --global csharp-ls \
+    || echo "   (csharp-ls install/update failed; any installed version stays. Check: dotnet tool update --global csharp-ls)"
 else
   echo "   dotnet not found; install the .NET SDK, then: dotnet tool install --global csharp-ls"
 fi
